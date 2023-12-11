@@ -1,10 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Firebase.Auth;
-using Firebase;
-using System.Threading.Tasks;
+using UnityEngine.Events;
+using System.Collections;
+
 
 public class AuthUser : MonoBehaviour
 {
@@ -25,12 +24,18 @@ public class AuthUser : MonoBehaviour
 
     private FirebaseAuth _auth;
 
+    public string Email => _email.text;
+    public string Login => _login.text;
+
+    public UnityEvent OnSignUpSuccsesfuly;
+    public UnityEvent OnLogInSuccsesfuly;
+
     private void Start()
     {
         InitializeFirebase();
 
         _signUp.onClick.AddListener(SignUp);
-        _signIn.onClick.AddListener(SignIn);
+        _signIn.onClick.AddListener(LogIn);
     }
 
     private void InitializeFirebase()
@@ -72,14 +77,15 @@ public class AuthUser : MonoBehaviour
             }
             else if(task.IsCompleted)
             {
+                OnSignUpSuccsesfuly.Invoke();
                 Debug.Log("SignUp Succsesfully");
             }
         });
     }
 
-    public void SignIn()
+    public void LogIn()
     {
-        if(_emailIn.text.Length == 0)
+        if (_emailIn.text.Length == 0)
         {
             Debug.Log("Email is empty");
             return;
@@ -98,14 +104,18 @@ public class AuthUser : MonoBehaviour
             }
             else if (task.IsFaulted)
             {
+
                 Debug.Log("SignIn Faulted");
                 Debug.Log(task.Exception.ToString());
             }
             else if (task.IsCompleted)
             {
                 Debug.Log("SignIn Succsesfully");
+                OnLogInSuccsesfuly.Invoke();
             }
         });
+        
     }
-    //
+
+   
 }
