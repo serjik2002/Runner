@@ -110,8 +110,9 @@ public class AuthUser : MonoBehaviour
             }
             else if (task.IsCompleted)
             {
-                Debug.Log("SignIn Succsesfully");
+                
                 OnLogInSuccsesfuly.Invoke();
+                Debug.Log("SignIn Succsesfully");
             }
         });
         

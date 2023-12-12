@@ -15,7 +15,7 @@ public class LeaderBoard : MonoBehaviour
     private FirebaseAuth _auth;
     ScoreData data;
     private readonly string _leaderboard = "leaderboard";
-
+    private DatabaseReference _databaseReference;
     //test
     [SerializeField] private TMPro.TMP_Text _textMeshProNickname;
     [SerializeField] private TMPro.TMP_Text _textMeshProScore;
@@ -23,6 +23,7 @@ public class LeaderBoard : MonoBehaviour
 
     private void Start()
     {
+        _databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
         _auth = FirebaseAuth.DefaultInstance;
         _authUser = FindObjectOfType<AuthUser>();
         _authUser.OnLogInSuccsesfuly.AddListener(GetUserData);
@@ -37,30 +38,30 @@ public class LeaderBoard : MonoBehaviour
         ScoreData scoreData = new ScoreData(email, login, score);
         string json = JsonConvert.SerializeObject(scoreData);
 
-        FirebaseDatabase.DefaultInstance.RootReference.Child(_leaderboard).Child(userId).SetValueAsync(json);
+        _databaseReference.Child(_leaderboard).Child(userId).SetValueAsync(json);
     }
 
 
     public void GetUserData()
     {
         Debug.Log("GetUserData");
-        var userId = _auth.CurrentUser.UserId;
-        FirebaseDatabase.DefaultInstance.RootReference.Child(_leaderboard).Child(userId).GetValueAsync().ContinueWithOnMainThread(task =>
-        {
-            if (task.Exception != null)
-            {
-                Debug.Log(task.Exception.ToString());
-            }
-            else if (task.Result == null)
-            {
-                Debug.Log("error");
-            }
-            else
-            {
-                DataSnapshot dataSnapshot = task.Result;
-                Debug.Log(dataSnapshot.Child("Email").Value.ToString());
-            }
-        });
+        //var userId = _auth.CurrentUser.UserId;
+        //_databaseReference.Child(_leaderboard).Child(userId).GetValueAsync().ContinueWithOnMainThread(task =>
+        //{
+        //    if (task.Exception != null)
+        //    {
+        //        Debug.Log(task.Exception.ToString());
+        //    }
+        //    else if (task.Result == null)
+        //    {
+        //        Debug.Log("error");
+        //    }
+        //    else
+        //    {
+        //        DataSnapshot dataSnapshot = task.Result;
+        //        Debug.Log(dataSnapshot.Child("Email").Value.ToString());
+        //    }
+        //});
 
         
        

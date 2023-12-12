@@ -43,6 +43,7 @@ public class PlayerController : MonoBehaviour
         {
             _currentLine = newLine;
             transform.position += direction * _lineStep;
+
         }
 
         
