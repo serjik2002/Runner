@@ -10,7 +10,7 @@ public class ScoreData
 
     public ScoreData()
     {
-
+       
     }
 
     public ScoreData(string Email, string Login, int Score)

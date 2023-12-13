@@ -12,7 +12,7 @@ public class RoadGenerator : MonoBehaviour
     private List<GameObject> _roadPool;
     private GameObject _lastRoadSegment;
 
-
+    
     private void Start()
     {
         _roadPool = new List<GameObject>();

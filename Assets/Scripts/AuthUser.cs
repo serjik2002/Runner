@@ -3,19 +3,19 @@ using UnityEngine.UI;
 using Firebase.Auth;
 using UnityEngine.Events;
 using System.Collections;
-
+using TMPro;
 
 public class AuthUser : MonoBehaviour
 {
     [Header("SignUp")]
-    [SerializeField] private TMPro.TMP_InputField _email;
-    [SerializeField] private TMPro.TMP_InputField _password;
-    [SerializeField] private TMPro.TMP_InputField _confirPassword;
-    [SerializeField] private TMPro.TMP_InputField _login;
+    [SerializeField] private TMP_InputField _email;
+    [SerializeField] private TMP_InputField _password;
+    [SerializeField] private TMP_InputField _confirPassword;
+    [SerializeField] private TMP_InputField _login;
 
     [Header("SignIn")]
-    [SerializeField] private TMPro.TMP_InputField _emailIn;
-    [SerializeField] private TMPro.TMP_InputField _passwordIn;
+    [SerializeField] private TMP_InputField _emailIn;
+    [SerializeField] private TMP_InputField _passwordIn;
 
 
     [SerializeField] private Button _signIn;
@@ -23,9 +23,6 @@ public class AuthUser : MonoBehaviour
     [SerializeField] private int _minPasswordLenght = 6;
 
     private FirebaseAuth _auth;
-
-    public string Email => _email.text;
-    public string Login => _login.text;
 
     public UnityAction OnSignUpSuccsesfuly;
     public UnityAction OnLogInSuccsesfuly;
@@ -80,6 +77,7 @@ public class AuthUser : MonoBehaviour
                 OnSignUpSuccsesfuly?.Invoke();
                 Debug.Log("SignUp Succsesfully");
             }
+         
         });
     }
 
