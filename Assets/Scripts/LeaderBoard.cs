@@ -26,7 +26,9 @@ public class LeaderBoard : MonoBehaviour
         _databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
         _auth = FirebaseAuth.DefaultInstance;
         _authUser = FindObjectOfType<AuthUser>();
-        _authUser.OnLogInSuccsesfuly.AddListener(GetUserData);
+        _authUser.OnLogInSuccsesfuly += GetUserData;
+       
+        
 
     }
 
@@ -45,27 +47,30 @@ public class LeaderBoard : MonoBehaviour
     public void GetUserData()
     {
         Debug.Log("GetUserData");
-        //var userId = _auth.CurrentUser.UserId;
-        //_databaseReference.Child(_leaderboard).Child(userId).GetValueAsync().ContinueWithOnMainThread(task =>
-        //{
-        //    if (task.Exception != null)
-        //    {
-        //        Debug.Log(task.Exception.ToString());
-        //    }
-        //    else if (task.Result == null)
-        //    {
-        //        Debug.Log("error");
-        //    }
-        //    else
-        //    {
-        //        DataSnapshot dataSnapshot = task.Result;
-        //        Debug.Log(dataSnapshot.Child("Email").Value.ToString());
-        //    }
-        //});
+        var userId = _auth.CurrentUser.UserId;
+        _databaseReference.Child(_leaderboard).Child(userId).GetValueAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.Exception != null)
+            {
+                Debug.Log(task.Exception.ToString());
+            }
+            else if (task.Result == null)
+            {
+                Debug.Log("error");
+            }
+            else
+            {
+                DataSnapshot dataSnapshot = task.Result;
+                var value = dataSnapshot.Value.ToString();
+                var scoreData = JsonUtility.FromJson<ScoreData>(value);
+                Debug.Log(scoreData);
+                
+            }
+        });
 
-        
-       
-        
+
+        UpdateData();
+
     }
 
     //test

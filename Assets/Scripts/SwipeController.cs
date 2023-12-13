@@ -3,8 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum Direction { None, Up, Down, Left, Right, }
 public class SwipeController : MonoBehaviour
 {
+    public static SwipeController Instance;
+
     private Vector2 startTouch;
     private bool touchMoved;
     private Vector2 swipeDelta;
@@ -15,6 +18,19 @@ public class SwipeController : MonoBehaviour
     public enum Direction { Up, Down, Left, Right }
     public delegate void MoveDelegate(bool[] swipes);
     public MoveDelegate MoveEvent;
+
+    private void Awake()
+    {
+        if(Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private Vector2 GetTouchPosition()
     {

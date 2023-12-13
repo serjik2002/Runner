@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311992, g: 0.38074034, b: 0.35872713, a: 1}
+  m_IndirectSpecularColor: {r: 0.3708984, g: 0.37837017, b: 0.35722524, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -692,24 +692,6 @@ MonoBehaviour:
   _signIn: {fileID: 1219706891}
   _signUp: {fileID: 330879214}
   _minPasswordLenght: 6
-  OnSignUpSuccsesfuly:
-    m_PersistentCalls:
-      m_Calls: []
-  OnLogInSuccsesfuly:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1681158759}
-        m_TargetAssemblyTypeName: LeaderBoard, Assembly-CSharp
-        m_MethodName: GetUserData
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &146156533
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1390,7 +1372,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &704186392
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1778,7 +1760,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &906790078
 MonoBehaviour:
   m_ObjectHideFlags: 0

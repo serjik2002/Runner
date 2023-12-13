@@ -27,8 +27,8 @@ public class AuthUser : MonoBehaviour
     public string Email => _email.text;
     public string Login => _login.text;
 
-    public UnityEvent OnSignUpSuccsesfuly;
-    public UnityEvent OnLogInSuccsesfuly;
+    public UnityAction OnSignUpSuccsesfuly;
+    public UnityAction OnLogInSuccsesfuly;
 
     private void Start()
     {
@@ -77,7 +77,7 @@ public class AuthUser : MonoBehaviour
             }
             else if(task.IsCompleted)
             {
-                OnSignUpSuccsesfuly.Invoke();
+                OnSignUpSuccsesfuly?.Invoke();
                 Debug.Log("SignUp Succsesfully");
             }
         });
@@ -111,7 +111,7 @@ public class AuthUser : MonoBehaviour
             else if (task.IsCompleted)
             {
                 
-                OnLogInSuccsesfuly.Invoke();
+                OnLogInSuccsesfuly?.Invoke();
                 Debug.Log("SignIn Succsesfully");
             }
         });
