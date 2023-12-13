@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,25 +15,45 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _lineStep = 2.5f;
     [SerializeField] private Line _currentLine;
 
+    private SwipeController _swipeController;
+
     private void Start()
     {
         _currentLine = Line.Middle;
+        _swipeController = FindObjectOfType<SwipeController>();
+        _swipeController.MoveEvent += MovePlayer;
     }
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.A))
+        
+    }
+
+    public void MovePlayer(bool[] swipes)
+    {
+        if (swipes[(int)SwipeController.Direction.Left])
         {
-            
+
             MoveHorizontal(Vector3.left);
-            
+
         }
-        if (Input.GetKeyDown(KeyCode.D))
+        if (swipes[(int)SwipeController.Direction.Right])
         {
-            
+
             MoveHorizontal(Vector3.right);
-            
+
         }
+        if (swipes[(int)SwipeController.Direction.Up])
+        {
+
+            Jump();
+
+        }
+    }
+
+    private void Jump()
+    {
+        //jump
     }
 
     public void MoveHorizontal(Vector3 direction)
