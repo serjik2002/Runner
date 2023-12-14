@@ -14,14 +14,20 @@ public class MobileControl : PlatformInputConroller
 #endif
     }
 
-    public override Direction PerformControl()
+    public override SwipeManager.Direction PerformControl()
     {
-        return (Direction)_swipeManager.GetSwipeDirection();
+        return _swipeManager.GetSwipeDirection();
+    }
+    private void Start()
+    {
+        _swipeManager = FindObjectOfType<SwipeManager>();
     }
 
-    private void HandleSwipe(SwipeManager.Direction direction)
+    void Update()
     {
-        switch (direction)
+        SwipeManager.Direction swipeDirection = _swipeManager.GetSwipeDirection();
+
+        switch (swipeDirection)
         {
             case SwipeManager.Direction.Up:
                 // Обработка свайпа вверх
@@ -40,7 +46,7 @@ public class MobileControl : PlatformInputConroller
                 Debug.Log("Right");
                 break;
             case SwipeManager.Direction.None:
-                Debug.Log("No swipe");
+                // Никакой свайп не был обнаружен
                 break;
         }
     }
