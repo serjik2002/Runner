@@ -7,6 +7,4 @@ public abstract class PlatformInputConroller : MonoBehaviour
 {
     public abstract Direction PerformControl();
     public abstract PlatformInputConroller CheckPlatform();
-
-
 }

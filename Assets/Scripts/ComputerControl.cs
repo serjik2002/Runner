@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+
+
 public class ComputerControl : PlatformInputConroller
 {
     public override PlatformInputConroller CheckPlatform()
@@ -12,6 +14,7 @@ public class ComputerControl : PlatformInputConroller
 
     public override Direction PerformControl()
     {
+
         if (Input.GetKeyDown(KeyCode.A))
         {
             return Direction.Left;
@@ -22,7 +25,6 @@ public class ComputerControl : PlatformInputConroller
             return Direction.Right;
         }
 
-        // Optionally, you can handle jumping as well
         if (Input.GetKeyDown(KeyCode.W))
         {
             return Direction.Up;

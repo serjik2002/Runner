@@ -27,7 +27,7 @@ public class PlayerController : MonoBehaviour
         _currentInput = _inputs.FirstOrDefault(input => input.CheckPlatform() != null);
         _rigidBody = GetComponent<Rigidbody>();
         _currentLine = Line.Middle;
-        SwipeController.Instance.MoveEvent += MovePlayer;
+        //SwipeController.Instance.MoveEvent.MovePlayer;
     }
 
 

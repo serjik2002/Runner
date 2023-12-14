@@ -42,26 +42,7 @@ public class AuthUser : MonoBehaviour
 
     public void SignUp()
     {
-        if (_login.text.Length == 0)
-        {
-            Debug.Log("Login is empty");
-            return;
-        }
-        if (_email.text.Length == 0)
-        {
-            Debug.Log("Email is empty");
-            return;
-        }
-        if (_password.text.Length < _minPasswordLenght)
-        {
-            Debug.Log("Password is so short");
-            return;
-        }
-        if (_password.text != _confirPassword.text)
-        {
-            Debug.Log("Passwords is not mutch");
-            return;
-        }
+        SignUpInputValidate();
         _auth.CreateUserWithEmailAndPasswordAsync(_email.text, _password.text).ContinueWith(task => {
             if (task.IsCanceled)
             {
@@ -80,20 +61,33 @@ public class AuthUser : MonoBehaviour
          
         });
     }
-
-    public void LogIn()
+    private void SignUpInputValidate()
     {
-        if (_emailIn.text.Length == 0)
+        if (_login.text.Length == 0)
+        {
+            Debug.Log("Login is empty");
+            return;
+        }
+        else if (_email.text.Length == 0)
         {
             Debug.Log("Email is empty");
             return;
         }
-        if (_passwordIn.text.Length == 0)
+        else if (_password.text.Length < _minPasswordLenght)
         {
-            Debug.Log("Plese, enter password");
+            Debug.Log("Password is so short");
             return;
         }
+        else if (_password.text != _confirPassword.text)
+        {
+            Debug.Log("Passwords is not mutch");
+            return;
+        }
+    }
 
+    public void LogIn()
+    {
+        LoginInputValidate();
         _auth.SignInWithEmailAndPasswordAsync(_emailIn.text, _passwordIn.text).ContinueWith(task =>
         {
             if (task.IsCanceled)
@@ -116,5 +110,18 @@ public class AuthUser : MonoBehaviour
         
     }
 
-   
+    private void LoginInputValidate()
+    {
+        if (_emailIn.text.Length == 0)
+        {
+            Debug.Log("Email is empty");
+            return;
+        }
+        else if (_passwordIn.text.Length == 0)
+        {
+            Debug.Log("Plese, enter password");
+            return;
+        }
+    }
+    
 }

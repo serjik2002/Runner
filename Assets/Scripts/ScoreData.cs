@@ -1,17 +1,12 @@
 ﻿using UnityEngine;
 
 [System.Serializable]
-public class ScoreData
+public struct ScoreData
 {
 
-    [SerializeField] public string Email;
-    [SerializeField] public string Login;
-    [SerializeField] public int Score;
-
-    public ScoreData()
-    {
-       
-    }
+    public string Email;
+    public string Login;
+    public int Score;
 
     public ScoreData(string Email, string Login, int Score)
     {
@@ -24,5 +19,4 @@ public class ScoreData
     {
         return $"{Email + " " + Login + " " + Score}";
     }
-
 }

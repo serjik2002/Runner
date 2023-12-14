@@ -3,22 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using Firebase.Auth;
 using Firebase.Database;
-using Newtonsoft.Json;
 using UnityEngine.UI;
 using System;
 using Firebase.Extensions;
+using TMPro;
 
 public class LeaderBoard : MonoBehaviour
 {
     private AuthUser _authUser;
-    private FirebaseDatabase _database;
     private FirebaseAuth _auth;
-    ScoreData data;
+    private ScoreData data;
     private readonly string _leaderboard = "leaderboard";
     private DatabaseReference _databaseReference;
     //test
-    [SerializeField] private TMPro.TMP_Text _textMeshProNickname;
-    [SerializeField] private TMPro.TMP_Text _textMeshProScore;
+    [SerializeField] private TMP_Text _textMeshProNickname;
+    [SerializeField] private TMP_Text _textMeshProScore;
 
 
     private void Start()
@@ -38,7 +37,7 @@ public class LeaderBoard : MonoBehaviour
 
         var userId = _auth.CurrentUser.UserId;
         ScoreData scoreData = new ScoreData(email, login, score);
-        string json = JsonConvert.SerializeObject(scoreData);
+        string json = JsonUtility.ToJson(scoreData);
 
         _databaseReference.Child(_leaderboard).Child(userId).SetValueAsync(json);
     }
@@ -46,7 +45,6 @@ public class LeaderBoard : MonoBehaviour
 
     public void GetUserData()
     {
-        Debug.Log("GetUserData");
         var userId = _auth.CurrentUser.UserId;
         _databaseReference.Child(_leaderboard).Child(userId).GetValueAsync().ContinueWithOnMainThread(task =>
         {
@@ -68,15 +66,6 @@ public class LeaderBoard : MonoBehaviour
             }
         });
 
-
-        UpdateData();
-
     }
-
-    //test
-    public void UpdateData()
-    {
-        _textMeshProNickname.text = data.Login;
-        _textMeshProScore.text = data.Score.ToString();
-    }
+ 
 }

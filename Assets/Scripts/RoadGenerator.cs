@@ -22,7 +22,7 @@ public class RoadGenerator : MonoBehaviour
     private void Update()
     {
         SpawnRoadSegments();
-        MoveRoad();
+        //MoveRoad();
     }
 
     public void InitializeObjectPool()

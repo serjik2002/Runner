@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public enum Direction { None, Up, Down, Left, Right, }
 public class SwipeController : MonoBehaviour
@@ -16,8 +17,9 @@ public class SwipeController : MonoBehaviour
 
 
     public enum Direction { Up, Down, Left, Right }
-    public delegate void MoveDelegate(bool[] swipes);
+    public delegate Direction MoveDelegate();
     public MoveDelegate MoveEvent;
+
 
     private void Awake()
     {
@@ -89,7 +91,7 @@ public class SwipeController : MonoBehaviour
     {
         if(swipe[0]|| swipe[1]|| swipe[2]|| swipe[3])
         {
-            MoveEvent?.Invoke(swipe);
+            MoveEvent?.Invoke();
         }
 
         Reset();

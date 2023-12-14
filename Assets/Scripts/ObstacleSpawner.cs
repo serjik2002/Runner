@@ -26,7 +26,6 @@ public class ObstacleSpawner : MonoBehaviour
             SpawnObstacle();
             _time = 0;
         }
-        MoveObstacle();
     }
     private void InitializePool()
     {
@@ -83,13 +82,12 @@ public class ObstacleSpawner : MonoBehaviour
     }
 
 
-    public void MoveObstacle()
+    public void DeactivateObstacles()
     {
         foreach (var item in _obstaclesPool)
         {
             if(item.activeSelf)
             {
-                item.transform.position -= new Vector3(0, 0, 1) * 5 * Time.deltaTime;
                 if (item.transform.position.z < Camera.main.transform.position.z - 20)
                     item.SetActive(false);
             }
