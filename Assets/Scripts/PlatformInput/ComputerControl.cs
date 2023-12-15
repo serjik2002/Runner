@@ -29,6 +29,10 @@ public class ComputerControl : PlatformInputConroller
         {
             return SwipeManager.Direction.Up;
         }
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            return SwipeManager.Direction.Down;
+        }
 
         return SwipeManager.Direction.None;
         
