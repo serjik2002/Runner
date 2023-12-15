@@ -13,6 +13,7 @@ public enum Line
 }
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(CapsuleCollider))]
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float _lineStep = 2.5f;
@@ -20,13 +21,30 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int _jumpForce = 5;
     [SerializeField] private int _gravityForse = 5;
     [SerializeField] private int _lineChangeSpeed = 10;
-    [SerializeField] private float _timeToStopMoveDown = 0.2f;
+    [SerializeField] private float _timeToStopRoll = 0.2f;
     [SerializeField] private PlatformInputConroller[] _inputs;
+    [SerializeField] private PanelStartClick _panelStartClick;
 
     private PlatformInputConroller _currentInput;
     private Rigidbody _rigidBody;
-    private bool _isGrounded;
     private Dictionary<Line, float> _position = new Dictionary<Line, float>();
+    private StateMachine _stateMachine = new StateMachine();
+    private bool _isGrounded;
+    private bool _isRunning = false;
+    private Animator _animator;
+    private CapsuleCollider _collider;
+
+    public bool IsGrounded => _isGrounded;
+    public bool IsRunning => _isRunning;
+    public int JumpForce => _jumpForce;
+    public int GravityForce => _gravityForse;
+    public float TimeToStopRoll => _timeToStopRoll;
+    public Animator PlayerAnimator => _animator;
+    public Rigidbody RigidBody => _rigidBody;
+    public CapsuleCollider PlayerCollider => _collider;
+    public Line CurrentLine => _currentLine;
+
+    public Dictionary<Line, float> Position => _position;
 
     public UnityAction OnPlayerDie;
 
@@ -37,13 +55,19 @@ public class PlayerController : MonoBehaviour
         _currentLine = Line.Middle;
         InitPositionDictionary();
         _isGrounded = true;
-        //SwipeController.Instance.MoveEvent.MovePlayer;
+        _animator = GetComponentInChildren<Animator>();
+        _stateMachine.Initialize(new IdleState(this));
+        _collider = GetComponent<CapsuleCollider>();
+        _panelStartClick.OnClickStartGame.AddListener(StartRun);
     }
 
 
     private void Update()
     {
-        Move(_currentInput);
+        if(_isRunning)
+        {
+            Move(_currentInput);
+        }
     }
 
     private void InitPositionDictionary()
@@ -64,42 +88,29 @@ public class PlayerController : MonoBehaviour
         switch (direction)
         {
             case SwipeManager.Direction.Up:
-                
-                Jump();
+                _stateMachine.ChangeState(new JumpState(this));     
                 break;
             case SwipeManager.Direction.Down:
-                MoveDown();
+                _stateMachine.ChangeState(new RollDownState(this));
+                Invoke("ReturnColiderHeight", _timeToStopRoll);
                 break;
             case SwipeManager.Direction.Left:
                 StopAllCoroutines();
+                _stateMachine.ChangeState(new LeftMoveState(this));
                 StartCoroutine(MoveHorizontal(Vector3.left));
                 break;
             case SwipeManager.Direction.Right:
                 StopAllCoroutines();
+                _stateMachine.ChangeState(new RightMoveState(this));
                 StartCoroutine(MoveHorizontal(Vector3.right));
                 break;
+            
         }
     }
 
-    private void MoveDown()
+    private void ReturnColiderHeight()
     {
-        if(!_isGrounded)
-        {
-            _rigidBody.velocity = Vector3.down * _jumpForce;
-            transform.localScale = new Vector3(1, 0.5f, 1);
-            Invoke("ReturnScale", _timeToStopMoveDown);
-           
-        }
-        else
-        {
-            transform.localScale = new Vector3(1, 0.5f, 1);
-            Invoke("ReturnScale", _timeToStopMoveDown);
-        }
-       
-    }
-    private void ReturnScale()
-    {
-        transform.localScale = Vector3.one;
+        _collider.height = 2f;
     }
 
     public void Jump()
@@ -133,6 +144,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void ChangeLine(Line newLine)
+    {
+        _currentLine = newLine;
+    }
+
     private Line GetNewLine(Vector3 direction)
     {
         if (direction == Vector3.left)
@@ -149,20 +165,20 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void StartRun()
+    {
+        _stateMachine.ChangeState(new RunState(this));
+        _isRunning = true;
+    }
+
     void OnCollisionStay(Collision collision)
     {
-        // Проверяем, столкнулся ли персонаж с объектом, имеющим коллайдер
-
-        _isGrounded = true;
-        
+        _isGrounded = true;  
     }
 
     void OnCollisionExit(Collision collision)
     {
-        // Проверяем, перестал ли персонаж сталкиваться с объектом
-
-        _isGrounded = false;
-        
+        _isGrounded = false;      
     }
 
     private void OnTriggerEnter(Collider other)
