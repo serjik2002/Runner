@@ -39,6 +39,7 @@ public class PlayerController : MonoBehaviour
     public int JumpForce => _jumpForce;
     public int GravityForce => _gravityForse;
     public float TimeToStopRoll => _timeToStopRoll;
+    public float LineChangeSpeed => _lineChangeSpeed;
     public Animator PlayerAnimator => _animator;
     public Rigidbody RigidBody => _rigidBody;
     public CapsuleCollider PlayerCollider => _collider;
