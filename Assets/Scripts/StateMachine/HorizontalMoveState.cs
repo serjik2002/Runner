@@ -1,23 +1,29 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class LeftMoveState : PlayerState
+public class HorizontalMoveState : PlayerState
 {
     private PlayerController player;
-    private readonly string _moveLeft = "MoveLeft";
-    public LeftMoveState(PlayerController player)
+    private float _angle;
+    public HorizontalMoveState(PlayerController player, float angle)
     {
         this.player = player;
+        this._angle = angle;
     }
     public override void Enter()
     {
         Debug.Log("Enter LeftMove state");
-        PlayAnimation(_moveLeft, player);
+        Vector3 currentRotation = player.transform.eulerAngles;
+
+        // Поворачиваем персонаж вокруг оси Y
+        player.transform.eulerAngles = new Vector3(currentRotation.x, currentRotation.y + _angle, currentRotation.z);
+       
     }
 
     public override void Exit()
     {
         Debug.Log("Exit LeftMove state");
+        
     }
 
     public override void Update()

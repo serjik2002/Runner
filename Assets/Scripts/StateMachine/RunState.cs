@@ -17,7 +17,6 @@ public class RunState : PlayerState
     public override void Exit()
     {
         Debug.Log("Exit run state");
-        player.PlayerAnimator.ResetTrigger(_run);
     }
 
     public override void Update()

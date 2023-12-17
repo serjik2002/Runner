@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int _gravityForse = 5;
     [SerializeField] private int _lineChangeSpeed = 10;
     [SerializeField] private float _timeToStopRoll = 0.2f;
+    [SerializeField] private float _angle = 45;
     [SerializeField] private PlatformInputConroller[] _inputs;
     [SerializeField] private PanelStartClick _panelStartClick;
 
@@ -97,14 +98,18 @@ public class PlayerController : MonoBehaviour
                 break;
             case SwipeManager.Direction.Left:
                 StopAllCoroutines();
-                _stateMachine.ChangeState(new LeftMoveState(this));
+                _stateMachine.ChangeState(new HorizontalMoveState(this, -_angle));
                 StartCoroutine(MoveHorizontal(Vector3.left));
+                Invoke("ReturnRotation", _timeToStopRoll);
                 break;
             case SwipeManager.Direction.Right:
                 StopAllCoroutines();
-                _stateMachine.ChangeState(new RightMoveState(this));
+                _stateMachine.ChangeState(new HorizontalMoveState(this, _angle));
                 StartCoroutine(MoveHorizontal(Vector3.right));
+                Invoke("ReturnRotation", _timeToStopRoll);
                 break;
+            case SwipeManager.Direction.None:
+                return;
             
         }
     }
@@ -112,6 +117,11 @@ public class PlayerController : MonoBehaviour
     private void ReturnColiderHeight()
     {
         _collider.height = 2f;
+    }
+    
+    private void ReturnRotation()
+    {
+        transform.eulerAngles = Vector3.zero;
     }
 
     public void Jump()
