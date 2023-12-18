@@ -4,6 +4,8 @@ using Firebase.Auth;
 using UnityEngine.Events;
 using System.Collections;
 using TMPro;
+using UnityEngine.SceneManagement;
+using Firebase.Extensions;
 
 public class AuthUser : MonoBehaviour
 {
@@ -43,7 +45,7 @@ public class AuthUser : MonoBehaviour
     public void SignUp()
     {
         SignUpInputValidate();
-        _auth.CreateUserWithEmailAndPasswordAsync(_email.text, _password.text).ContinueWith(task => {
+        _auth.CreateUserWithEmailAndPasswordAsync(_email.text, _password.text).ContinueWithOnMainThread(task => {
             if (task.IsCanceled)
             {
                 Debug.Log("SignUp Canceled");
@@ -55,8 +57,9 @@ public class AuthUser : MonoBehaviour
             }
             else if(task.IsCompleted)
             {
-                OnSignUpSuccsesfuly?.Invoke();
                 Debug.Log("SignUp Succsesfully");
+                OnSignUpSuccsesfuly?.Invoke();
+                SceneManager.LoadScene("GameScene");
             }
          
         });
@@ -88,7 +91,7 @@ public class AuthUser : MonoBehaviour
     public void LogIn()
     {
         LoginInputValidate();
-        _auth.SignInWithEmailAndPasswordAsync(_emailIn.text, _passwordIn.text).ContinueWith(task =>
+        _auth.SignInWithEmailAndPasswordAsync(_emailIn.text, _passwordIn.text).ContinueWithOnMainThread(task =>
         {
             if (task.IsCanceled)
             {
@@ -105,6 +108,7 @@ public class AuthUser : MonoBehaviour
                 
                 OnLogInSuccsesfuly?.Invoke();
                 Debug.Log("SignIn Succsesfully");
+                SceneManager.LoadScene("GameScene");
             }
         });
         

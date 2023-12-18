@@ -1,15 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using DG.Tweening;
+
 
 public class UIManager : MonoBehaviour
 {
-    public static void ShowPanel(GameObject panel)
+
+    [SerializeField] private GameController _gameController;
+    [SerializeField] private TMP_Text _text;
+    [SerializeField] private PlayerController _playerController;
+    [SerializeField] private GameObject _gameOverPanel;
+   // private RectTransform _gameOverPanelRect;
+
+    private void Start()
     {
-        panel.SetActive(true);
+        //_gameOverPanelRect=GetComponent<RectTransform>();
+        _gameController.OnScoreAdded.AddListener(UpdateScoreText);
+        _playerController.OnPlayerDie.AddListener(OpenGameOverPanel);
     }
-    public static void HidePanel(GameObject panel)
+
+    private void UpdateScoreText()
     {
-        panel.SetActive(false);
+        _text.text = _gameController.Score.ToString();
+    }
+
+    private void OpenGameOverPanel()
+    {
+        _gameOverPanel.SetActive(true);
+        //_gameOverPanelRect.transform.DOMove(Vector3.zero, 0.5f);
     }
 }

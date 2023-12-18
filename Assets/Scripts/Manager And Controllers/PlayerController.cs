@@ -34,6 +34,8 @@ public class PlayerController : MonoBehaviour
     private bool _isRunning = false;
     private Animator _animator;
     private CapsuleCollider _collider;
+    private SwipeManager.Direction _previousDirection;
+    private Line _previousLine;
 
     public bool IsGrounded => _isGrounded;
     public bool IsRunning => _isRunning;
@@ -48,7 +50,7 @@ public class PlayerController : MonoBehaviour
 
     public Dictionary<Line, float> Position => _position;
 
-    public UnityAction OnPlayerDie;
+    public UnityEvent OnPlayerDie;
 
     private void Start()
     {
@@ -86,7 +88,8 @@ public class PlayerController : MonoBehaviour
 
     public void Move(PlatformInputConroller controller)
     {     
-        SwipeManager.Direction direction = controller.PerformControl();        
+        SwipeManager.Direction direction = controller.PerformControl();
+        _previousLine = _currentLine;
         switch (direction)
         {
             case SwipeManager.Direction.Up:
@@ -96,14 +99,14 @@ public class PlayerController : MonoBehaviour
                 _stateMachine.ChangeState(new RollDownState(this));
                 Invoke("ReturnColiderHeight", _timeToStopRoll);
                 break;
-            case SwipeManager.Direction.Left:
-                StopAllCoroutines();
+            case SwipeManager.Direction.Left:               
+                    StopAllCoroutines();
                 _stateMachine.ChangeState(new HorizontalMoveState(this, -_angle));
                 StartCoroutine(MoveHorizontal(Vector3.left));
                 Invoke("ReturnRotation", _timeToStopRoll);
                 break;
             case SwipeManager.Direction.Right:
-                StopAllCoroutines();
+                    StopAllCoroutines();
                 _stateMachine.ChangeState(new HorizontalMoveState(this, _angle));
                 StartCoroutine(MoveHorizontal(Vector3.right));
                 Invoke("ReturnRotation", _timeToStopRoll);
@@ -112,6 +115,8 @@ public class PlayerController : MonoBehaviour
                 return;
             
         }
+        _previousDirection = direction;
+        
     }
 
     private void ReturnColiderHeight()
@@ -144,13 +149,16 @@ public class PlayerController : MonoBehaviour
         if (newLine != _currentLine)
         {
             _currentLine = newLine;
-            float positionValue = _position[_currentLine];
+            float positionValue = _position[newLine];
             for (float i = 0; i < 1; i+= Time.deltaTime)
             {
+                
                 targetPosition = new Vector3(positionValue, transform.position.y, transform.position.z);
                 transform.position = Vector3.MoveTowards(transform.position, targetPosition, _lineChangeSpeed * Time.deltaTime);
+                
                 yield return null;
             }
+           
             transform.position = targetPosition;
         }
     }
@@ -196,7 +204,7 @@ public class PlayerController : MonoBehaviour
     {
         if (other.tag == "Die")
         {
-            OnPlayerDie?.Invoke();
+            OnPlayerDie.Invoke();
             SceneManager.LoadScene("GameScene");
         }
     }
