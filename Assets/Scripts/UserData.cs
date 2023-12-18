@@ -5,6 +5,7 @@ using TMPro;
 using Firebase.Database;
 using Firebase.Auth;
 using Firebase.Extensions;
+using System.Threading.Tasks;
 
 public class UserData : MonoBehaviour
 {
@@ -16,19 +17,20 @@ public class UserData : MonoBehaviour
     private FirebaseAuth _auth;
     private readonly string _leaderboard = "leaderboard";
 
-    private void Start()
+    private async void Start()
     {
         _auth = FirebaseAuth.DefaultInstance;
         _databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
-        GetUserData();
+        await GetUserData();
         _login.text = _scoreData.Login;
         _score.text = _scoreData.Score.ToString();
     }
 
-    private void GetUserData()
+    private async Task GetUserData()
     {
         var userId = _auth.CurrentUser.UserId;
-        _databaseReference.Child(_leaderboard).Child(userId).GetValueAsync().ContinueWithOnMainThread(task =>
+
+        await _databaseReference.Child(_leaderboard).Child(userId).GetValueAsync().ContinueWithOnMainThread(task =>
         {
             if (task.Exception != null)
             {
@@ -43,6 +45,7 @@ public class UserData : MonoBehaviour
                 DataSnapshot dataSnapshot = task.Result;
                 var value = dataSnapshot.Value.ToString();
                 _scoreData = JsonUtility.FromJson<ScoreData>(value);
+                Debug.Log(_scoreData);
             }
         });
     }

@@ -6,6 +6,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine.SceneManagement;
 using Firebase.Extensions;
+using Firebase.Database;
 
 public class AuthUser : MonoBehaviour
 {
@@ -24,7 +25,9 @@ public class AuthUser : MonoBehaviour
     [SerializeField] private Button _signUp;
     [SerializeField] private int _minPasswordLenght = 6;
 
+    private DatabaseReference _databaseReference;
     private FirebaseAuth _auth;
+    private readonly string _leaderboard = "leaderboard";
 
     public UnityAction OnSignUpSuccsesfuly;
     public UnityAction OnLogInSuccsesfuly;
@@ -40,6 +43,7 @@ public class AuthUser : MonoBehaviour
     private void InitializeFirebase()
     {
         _auth = FirebaseAuth.DefaultInstance;
+        _databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
     }
 
     public void SignUp()
@@ -58,7 +62,9 @@ public class AuthUser : MonoBehaviour
             else if(task.IsCompleted)
             {
                 Debug.Log("SignUp Succsesfully");
+                AddUserDataToDB(_email.text, _login.text);
                 OnSignUpSuccsesfuly?.Invoke();
+
                 SceneManager.LoadScene("GameScene");
             }
          
@@ -126,6 +132,15 @@ public class AuthUser : MonoBehaviour
             Debug.Log("Plese, enter password");
             return;
         }
+    }
+
+    public void AddUserDataToDB(string email, string login, int score = 0)
+    {
+        var userId = _auth.CurrentUser.UserId;
+        ScoreData scoreData = new ScoreData(email, login, score);
+        string json = JsonUtility.ToJson(scoreData);
+
+        _databaseReference.Child(_leaderboard).Child(userId).SetValueAsync(json);
     }
     
 }

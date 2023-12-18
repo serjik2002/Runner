@@ -7,65 +7,67 @@ using UnityEngine.UI;
 using System;
 using Firebase.Extensions;
 using TMPro;
+using System.Threading.Tasks;
 
 public class LeaderBoard : MonoBehaviour
 {
+    [SerializeField] private Transform _parent;
     private AuthUser _authUser;
     private FirebaseAuth _auth;
-    private ScoreData data;
-    private readonly string _leaderboard = "leaderboard";
+    private ScoreData _data;
+    
     private DatabaseReference _databaseReference;
-    //test
-    [SerializeField] private TMP_Text _textMeshProNickname;
-    [SerializeField] private TMP_Text _textMeshProScore;
+    [SerializeField] private GameObject _leaderBoardItem;
+    
+    private List<ScoreData> _usersInDataBase = new List<ScoreData>();
 
-
-    private void Start()
+    private async void Start()
     {
         _databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
         _auth = FirebaseAuth.DefaultInstance;
         _authUser = FindObjectOfType<AuthUser>();
-        _authUser.OnLogInSuccsesfuly += GetUserData;
-       
-        
-
+        await GetUsersFromDataBase();
+        FillLeaderBoard();
     }
 
-    public void CreateUser(string email, string login, int score = 0)
+    public async Task GetUsersFromDataBase()
     {
-        Debug.Log("User Added in DB");
-
-        var userId = _auth.CurrentUser.UserId;
-        ScoreData scoreData = new ScoreData(email, login, score);
-        string json = JsonUtility.ToJson(scoreData);
-
-        _databaseReference.Child(_leaderboard).Child(userId).SetValueAsync(json);
-    }
-
-
-    public void GetUserData()
-    {
-        var userId = _auth.CurrentUser.UserId;
-        _databaseReference.Child(_leaderboard).Child(userId).GetValueAsync().ContinueWithOnMainThread(task =>
+        await _databaseReference.Child("leaderboard").GetValueAsync().ContinueWithOnMainThread(task =>
         {
-            if (task.Exception != null)
+            if (task.IsFaulted)
             {
-                Debug.Log(task.Exception.ToString());
+                Debug.LogError("Error getting leaderboard data: " + task.Exception);
             }
-            else if (task.Result == null)
+            else if (task.IsCompleted)
             {
-                Debug.Log("error");
-            }
-            else
-            {
-                DataSnapshot dataSnapshot = task.Result;
-                var value = dataSnapshot.Value.ToString();
-                var scoreData = JsonUtility.FromJson<ScoreData>(value);
-                Debug.Log(scoreData);
-                
+                DataSnapshot snapshot = task.Result;
+
+                foreach (DataSnapshot childSnapshot in snapshot.Children)
+                {
+                    // Получение данных из снимка (snapshot) и их вывод
+                    string key = childSnapshot.Key;
+                    string json = childSnapshot.Value.ToString();
+                    var scoreData = JsonUtility.FromJson<ScoreData>(json);
+                    Debug.Log(scoreData);
+                    _usersInDataBase.Add(scoreData);
+                    
+                }
             }
         });
-
     }
+
+    public void FillLeaderBoard()
+    {
+        var text = _leaderBoardItem.GetComponent<TMP_Text>();
+        foreach (var item in _usersInDataBase)
+        {
+            text.text = item.Score.ToString() + " " + item.Login;
+            Instantiate(_leaderBoardItem, _parent);
+        }
+    }
+
+    
+
+    
  
 }
