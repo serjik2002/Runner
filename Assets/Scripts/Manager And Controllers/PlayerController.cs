@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public enum Line
 {
@@ -25,6 +26,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _angle = 45;
     [SerializeField] private PlatformInputConroller[] _inputs;
     [SerializeField] private PanelStartClick _panelStartClick;
+    [SerializeField] private Button _restartGameButton; 
 
     private PlatformInputConroller _currentInput;
     private Rigidbody _rigidBody;
@@ -34,14 +36,10 @@ public class PlayerController : MonoBehaviour
     private bool _isRunning = false;
     private Animator _animator;
     private CapsuleCollider _collider;
-    private SwipeManager.Direction _previousDirection;
-    private Line _previousLine;
 
     public bool IsGrounded => _isGrounded;
-    public bool IsRunning => _isRunning;
     public int JumpForce => _jumpForce;
     public int GravityForce => _gravityForse;
-    public float TimeToStopRoll => _timeToStopRoll;
     public float LineChangeSpeed => _lineChangeSpeed;
     public Animator PlayerAnimator => _animator;
     public Rigidbody RigidBody => _rigidBody;
@@ -63,6 +61,7 @@ public class PlayerController : MonoBehaviour
         _stateMachine.Initialize(new IdleState(this));
         _collider = GetComponent<CapsuleCollider>();
         _panelStartClick.OnClickStartGame.AddListener(StartRun);
+        _restartGameButton.onClick.AddListener(ResetPlayer);
     }
 
 
@@ -73,7 +72,6 @@ public class PlayerController : MonoBehaviour
             Move(_currentInput);
         }
     }
-
     private void InitPositionDictionary()
     {
         float position = -_lineStep;
@@ -88,8 +86,7 @@ public class PlayerController : MonoBehaviour
 
     public void Move(PlatformInputConroller controller)
     {     
-        SwipeManager.Direction direction = controller.PerformControl();
-        _previousLine = _currentLine;
+        SwipeManager.Direction direction = controller.PerformControl();        
         switch (direction)
         {
             case SwipeManager.Direction.Up:
@@ -114,9 +111,7 @@ public class PlayerController : MonoBehaviour
             case SwipeManager.Direction.None:
                 return;
             
-        }
-        _previousDirection = direction;
-        
+        }            
     }
 
     private void ReturnColiderHeight()
@@ -205,7 +200,14 @@ public class PlayerController : MonoBehaviour
         if (other.tag == "Die")
         {
             OnPlayerDie.Invoke();
-            SceneManager.LoadScene("GameScene");
+            Time.timeScale = 0;
         }
+    }
+
+    public void ResetPlayer()
+    {
+        _currentLine = Line.Middle;
+        transform.position = new Vector3(0, 0, 1);
+        _stateMachine.ChangeState(new RunState(this));
     }
 }

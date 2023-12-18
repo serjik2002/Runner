@@ -9,6 +9,8 @@ public class ObstacleSpawner : MonoBehaviour
     [SerializeField] private int _spawnInterval;
     [SerializeField] private int _timeToBeginSpawn;
     [SerializeField] private Transform[] _obstaclePositions;
+    [SerializeField] private PlayerController _playerController;
+
 
     private List<GameObject> _obstaclesPool = new List<GameObject>();
     private float _time = 0;
@@ -16,6 +18,7 @@ public class ObstacleSpawner : MonoBehaviour
     {
         InitializePool();
         SpawnObstacle();
+        _playerController.OnPlayerDie.AddListener(DiasableObstacles);
     }
 
     private void Update()
@@ -94,5 +97,11 @@ public class ObstacleSpawner : MonoBehaviour
         }
     }
 
-    
+    private void DiasableObstacles()
+    {
+        foreach (var item in _obstaclesPool)
+        {
+            item.SetActive(false);
+        }
+    }
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class GameController : MonoBehaviour
 
     [SerializeField] private int _startSpeed = 5;
     [SerializeField] private int _speed = 5;
-    [SerializeField] private int _maxSpeed = 25;
+    [SerializeField] private int _maxSpeed = 10;
     [SerializeField] private PanelStartClick _panelStartClick;
     [SerializeField] private RoadGenerator _roadGenerator;
     [SerializeField] private ObstacleSpawner _obstacleSpawner;
@@ -19,13 +20,15 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject _gameUiPanel;
     [SerializeField] private int _scoreBetweenSpeedUp = 300;
     [SerializeField] private PlayerController _playerController;
+    [SerializeField] private Button _restartGameButton;
+    [SerializeField] private int _speedStep = 2;
     private int _score;
 
     public int Score => _score;
     public int Speed => _speed;
 
     public UnityEvent OnScoreAdded;
-
+    
 
     private void Awake()
     {
@@ -43,7 +46,7 @@ public class GameController : MonoBehaviour
     private void Start()
     {
         _panelStartClick.OnClickStartGame.AddListener(StartGameLoop);
-        _playerController.OnPlayerDie.AddListener(Resetvalues);
+        _restartGameButton.onClick.AddListener(Resetvalues);
     }
 
     private void StartGameLoop()
@@ -67,7 +70,7 @@ public class GameController : MonoBehaviour
         {
             if (_score % _scoreBetweenSpeedUp == 0 && _speed <= _maxSpeed)
             {
-                _speed += 5;
+                _speed += _speedStep;
             }
         }
         
