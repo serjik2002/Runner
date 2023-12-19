@@ -1,70 +1,57 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class SwipeManager : MonoBehaviour
 {
-    public enum Direction
+    public float swipeThreshold = 50f;
+
+    private Vector2 startTouchPosition;
+    private Vector2 endTouchPosition;
+
+    public static event System.Action<Direction> OnSwipe;
+
+    private void Update()
     {
-        None,
-        Up,
-        Down,
-        Left,
-        Right
+        DetectSwipe();
     }
 
-    private Vector2 fingerDownPosition;
-    private Vector2 fingerUpPosition;
-    private bool detectSwipeOnlyAfterRelease = false;
-
-    public float minDistanceForSwipe = 20f;
-
-    public Direction GetSwipeDirection()
+    private void DetectSwipe()
     {
-        foreach (Touch touch in Input.touches)
+        if (Input.touchCount > 0)
         {
+            Touch touch = Input.GetTouch(0);
+
             if (touch.phase == TouchPhase.Began)
             {
-                fingerDownPosition = touch.position;
-                fingerUpPosition = touch.position;
+                startTouchPosition = touch.position;
             }
-
-            if (touch.phase == TouchPhase.Moved)
+            else if (touch.phase == TouchPhase.Ended)
             {
-                if (!detectSwipeOnlyAfterRelease)
+                endTouchPosition = touch.position;
+                Vector2 swipeDelta = endTouchPosition - startTouchPosition;
+
+                if (swipeDelta.magnitude > swipeThreshold)
                 {
-                    fingerUpPosition = touch.position;
-                    return CheckSwipe();
+                    Direction swipeDirection = GetSwipeDirection(swipeDelta);
+                    OnSwipe?.Invoke(swipeDirection);
                 }
             }
-
-            if (touch.phase == TouchPhase.Ended)
-            {
-                fingerUpPosition = touch.position;
-                return CheckSwipe();
-            }
         }
-
-        return Direction.None;
     }
 
-    private Direction CheckSwipe()
+    public Direction GetSwipeDirection(Vector2 swipeDelta)
     {
-        if (Vector2.Distance(fingerDownPosition, fingerUpPosition) > minDistanceForSwipe)
+        if (Mathf.Abs(swipeDelta.x) > Mathf.Abs(swipeDelta.y))
         {
-            float deltaX = fingerUpPosition.x - fingerDownPosition.x;
-            float deltaY = fingerUpPosition.y - fingerDownPosition.y;
-
-            if (Mathf.Abs(deltaX) > Mathf.Abs(deltaY))
-            {
-                // Свайп по горизонтали
-                return (deltaX > 0) ? Direction.Right : Direction.Left;
-            }
-            else
-            {
-                // Свайп по вертикали
-                return (deltaY > 0) ? Direction.Up : Direction.Down;
-            }
+            return (swipeDelta.x > 0) ? Direction.Right : Direction.Left;
         }
-
-        return Direction.None;
+        else if (Mathf.Abs(swipeDelta.x) < Mathf.Abs(swipeDelta.y))
+        {
+            return (swipeDelta.y > 0) ? Direction.Up : Direction.Down;
+        }
+        else
+        {
+            return Direction.None;
+        }
     }
 }

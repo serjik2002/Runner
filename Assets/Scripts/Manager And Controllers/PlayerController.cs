@@ -26,7 +26,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _angle = 45;
     [SerializeField] private PlatformInputConroller[] _inputs;
     [SerializeField] private PanelStartClick _panelStartClick;
-    [SerializeField] private Button _restartGameButton; 
+    [SerializeField] private Button _restartGameButton;
+    [SerializeField] SwipeManager _swipeManager;
 
     private PlatformInputConroller _currentInput;
     private Rigidbody _rigidBody;
@@ -86,29 +87,29 @@ public class PlayerController : MonoBehaviour
 
     public void Move(PlatformInputConroller controller)
     {     
-        SwipeManager.Direction direction = controller.PerformControl();        
+        Direction direction = controller.PerformControl();        
         switch (direction)
         {
-            case SwipeManager.Direction.Up:
+            case Direction.Up:
                 _stateMachine.ChangeState(new JumpState(this));     
                 break;
-            case SwipeManager.Direction.Down:
+            case Direction.Down:
                 _stateMachine.ChangeState(new RollDownState(this));
                 Invoke("ReturnColiderHeight", _timeToStopRoll);
                 break;
-            case SwipeManager.Direction.Left:               
+            case Direction.Left:               
                     StopAllCoroutines();
                 _stateMachine.ChangeState(new HorizontalMoveState(this, -_angle));
                 StartCoroutine(MoveHorizontal(Vector3.left));
                 Invoke("ReturnRotation", _timeToStopRoll);
                 break;
-            case SwipeManager.Direction.Right:
+            case Direction.Right:
                     StopAllCoroutines();
                 _stateMachine.ChangeState(new HorizontalMoveState(this, _angle));
                 StartCoroutine(MoveHorizontal(Vector3.right));
                 Invoke("ReturnRotation", _timeToStopRoll);
                 break;
-            case SwipeManager.Direction.None:
+            case Direction.None:
                 return;
             
         }            

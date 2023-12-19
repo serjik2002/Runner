@@ -12,29 +12,29 @@ public class ComputerControl : PlatformInputConroller
 #endif
     }
 
-    public override SwipeManager.Direction PerformControl()
+    public override Direction PerformControl()
     {
 
         if (Input.GetKeyDown(KeyCode.A))
         {
-            return SwipeManager.Direction.Left;
+            return Direction.Left;
         }
 
         if (Input.GetKeyDown(KeyCode.D))
         {
-            return SwipeManager.Direction.Right;
+            return Direction.Right;
         }
 
         if (Input.GetKeyDown(KeyCode.W))
         {
-            return SwipeManager.Direction.Up;
+            return Direction.Up;
         }
         if (Input.GetKeyDown(KeyCode.S))
         {
-            return SwipeManager.Direction.Down;
+            return Direction.Down;
         }
 
-        return SwipeManager.Direction.None;
+        return Direction.None;
         
     }
 }

@@ -5,6 +5,6 @@ using UnityEngine;
 
 public abstract class PlatformInputConroller : MonoBehaviour
 {
-    public abstract SwipeManager.Direction PerformControl();
+    public abstract Direction PerformControl();
     public abstract PlatformInputConroller CheckPlatform();
 }
