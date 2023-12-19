@@ -39,6 +39,7 @@ public class PlayerController : MonoBehaviour
     private CapsuleCollider _collider;
 
     public bool IsGrounded => _isGrounded;
+    public bool IsRunning => _isRunning;
     public int JumpForce => _jumpForce;
     public int GravityForce => _gravityForse;
     public float LineChangeSpeed => _lineChangeSpeed;
@@ -180,7 +181,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void StartRun()
+    public void StartRun()
     {
         _stateMachine.ChangeState(new RunState(this));
         _isRunning = true;
@@ -201,7 +202,10 @@ public class PlayerController : MonoBehaviour
         if (other.tag == "Die")
         {
             OnPlayerDie.Invoke();
-            Time.timeScale = 0;
+            _isRunning = false;
+            _stateMachine.ChangeState(new DieState(this));
+            
+            //Time.timeScale = 0;
         }
     }
 

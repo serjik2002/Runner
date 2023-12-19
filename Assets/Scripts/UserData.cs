@@ -23,14 +23,14 @@ public class UserData : MonoBehaviour
         _databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
         await GetUserData();
         _login.text = _scoreData.Login;
-        _score.text = _scoreData.Score.ToString();
+        _score.text = "Top Score: " + _scoreData.Score.ToString();
     }
 
     private async Task GetUserData()
     {
         var userId = _auth.CurrentUser.UserId;
 
-        await _databaseReference.Child(_leaderboard).Child(userId).GetValueAsync().ContinueWithOnMainThread(task =>
+        await _databaseReference.Child(_leaderboard).Child(userId).GetValueAsync().ContinueWith(task =>
         {
             if (task.Exception != null)
             {

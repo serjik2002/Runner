@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7844287387137369254}
   m_Layer: 0
   m_Name: SandBagPallet_16_v3
-  m_TagString: Untagged
+  m_TagString: Die
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -93,7 +93,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8847571652546882883}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1.6114186, y: 0.5021277, z: 0.85356796}

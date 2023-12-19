@@ -23,12 +23,16 @@ public class ObstacleSpawner : MonoBehaviour
 
     private void Update()
     {
-        _time += Time.deltaTime;
-        if (_time>=_spawnInterval)
+        if(_playerController.IsRunning)
         {
-            SpawnObstacle();
-            _time = 0;
+            _time += Time.deltaTime;
+            if (_time >= _spawnInterval)
+            {
+                SpawnObstacle();
+                _time = 0;
+            }
         }
+        
     }
     private void InitializePool()
     {

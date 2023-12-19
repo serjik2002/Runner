@@ -9,32 +9,37 @@ using Firebase.Auth;
 
 public class UIManager : MonoBehaviour
 {
-
+    [SerializeField] private TMP_Text _scoreText;
     [SerializeField] private GameController _gameController;
-    [SerializeField] private TMP_Text _text;
     [SerializeField] private PlayerController _playerController;
     [SerializeField] private GameObject _gameOverPanel;
     [SerializeField] private GameObject _pausePanel;
     [SerializeField] private GameObject _gameLoopPanel;
-    [SerializeField] private AdManager _adManager;
+    [SerializeField] private GameObject _leaderBoardPanel;
 
-    [SerializeField] private Button _showAdButton;
     [SerializeField] private Button _restartGameButton;
+    [SerializeField] private Button _showAdButton;
     [SerializeField] private Button _pauseButton;
     [SerializeField] private Button _resumeButton;
+    [SerializeField] private Button _leaderboardButton;
+    [SerializeField] private Button _closeLeaderboardButton;
+
     [SerializeField] private TMP_Text _gameOverScore;
+    [SerializeField] private AdManager _adManager;
+    [SerializeField] private LeaderBoard _leaderboard;
+    [SerializeField] private RectTransform _gameOverPanelRect;
 
     private FirebaseAuth _auth;
-    // private RectTransform _gameOverPanelRect;
+
 
     private void Start()
     {
         _auth = FirebaseAuth.DefaultInstance;
-        //_gameOverPanelRect=GetComponent<RectTransform>();
         _gameController.OnScoreAdded.AddListener(UpdateScoreText);
         _playerController.OnPlayerDie.AddListener(()=> 
         {
             OpenPanel(_gameOverPanel);
+            _gameOverPanelRect.DOAnchorPos(Vector2.zero, 0.25f);
             _gameOverScore.text = "You score: " + _gameController.Score.ToString();
 
         });
@@ -45,6 +50,7 @@ public class UIManager : MonoBehaviour
         });
         _restartGameButton.onClick.AddListener(() =>
         {
+            _playerController.StartRun();
             ClosePanel(_gameOverPanel);
             Time.timeScale = 1;
         });
@@ -61,12 +67,21 @@ public class UIManager : MonoBehaviour
             ClosePanel(_pausePanel);
             Time.timeScale = 1;
         });
+        _leaderboardButton.onClick.AddListener(async() => 
+        {
+            OpenPanel(_leaderBoardPanel);
+            await _leaderboard.UpdateLeaderboard();
+        });
+        _closeLeaderboardButton.onClick.AddListener(() =>
+        {
+            ClosePanel(_leaderBoardPanel);
+        });
 
     }
 
     private void UpdateScoreText()
     {
-        _text.text = _gameController.Score.ToString();
+        _scoreText.text = _gameController.Score.ToString();
     }
 
     private void OpenPanel(GameObject panel)
@@ -81,6 +96,12 @@ public class UIManager : MonoBehaviour
     public void Exit()
     {
         Application.Quit();
+    }
+
+    public void RestartScene()
+    {
+        Time.timeScale = 1;
+        SceneManager.LoadScene("GameScene");
     }
 
     public void SignOut()

@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2626585617609263618}
   m_Layer: 0
   m_Name: BarbedWireMetalFence_26_v1
-  m_TagString: Untagged
+  m_TagString: Die
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -93,7 +93,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7573562539213203667}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1.2648072, y: 1.4327724, z: 0.2781788}

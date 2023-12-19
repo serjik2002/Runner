@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -3570529491297403517}
   m_Layer: 0
   m_Name: WoodenBarbedWireBarrier_33_v1
-  m_TagString: Untagged
+  m_TagString: Die
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -93,7 +93,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6553581026492576111}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 3.27, y: 1.46, z: 1.17}

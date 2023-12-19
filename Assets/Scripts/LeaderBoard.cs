@@ -8,30 +8,31 @@ using System;
 using Firebase.Extensions;
 using TMPro;
 using System.Threading.Tasks;
+using System.Linq;
 
 public class LeaderBoard : MonoBehaviour
 {
     [SerializeField] private Transform _parent;
-    private AuthUser _authUser;
-    private FirebaseAuth _auth;
-    private ScoreData _data;
+    [SerializeField] private GameObject _leaderBoardItem;
+
     
     private DatabaseReference _databaseReference;
-    [SerializeField] private GameObject _leaderBoardItem;
-    
     private List<ScoreData> _usersInDataBase = new List<ScoreData>();
 
-    private async void Start()
+    private void Awake()
     {
         _databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
-        _auth = FirebaseAuth.DefaultInstance;
-        _authUser = FindObjectOfType<AuthUser>();
+    }
+
+    public async Task UpdateLeaderboard()
+    {
         await GetUsersFromDataBase();
         FillLeaderBoard();
     }
 
     public async Task GetUsersFromDataBase()
     {
+        _usersInDataBase.Clear();
         await _databaseReference.Child("leaderboard").GetValueAsync().ContinueWithOnMainThread(task =>
         {
             if (task.IsFaulted)
@@ -48,26 +49,32 @@ public class LeaderBoard : MonoBehaviour
                     string key = childSnapshot.Key;
                     string json = childSnapshot.Value.ToString();
                     var scoreData = JsonUtility.FromJson<ScoreData>(json);
-                    Debug.Log(scoreData);
-                    _usersInDataBase.Add(scoreData);
-                    
+                    _usersInDataBase.Add(scoreData);   
                 }
+                List<ScoreData> sortedBoard = _usersInDataBase.OrderByDescending(user => user.Score).ToList();
+                _usersInDataBase = sortedBoard;
             }
         });
     }
 
     public void FillLeaderBoard()
     {
+        RemoveChildren(_parent);
         var text = _leaderBoardItem.GetComponent<TMP_Text>();
+        int index = 1;
         foreach (var item in _usersInDataBase)
         {
-            text.text = item.Score.ToString() + " " + item.Login;
+            text.text = index.ToString() + " " + item.Score.ToString() + " " + item.Login + " " + item.Score.ToString();
             Instantiate(_leaderBoardItem, _parent);
+            index++;
         }
     }
 
-    
-
-    
- 
+    private void RemoveChildren(Transform parent)
+    {
+        foreach (Transform child in parent)
+        {
+            Destroy(child.gameObject);
+        }
+    }
 }

@@ -45,13 +45,9 @@ public class SwipeManager : MonoBehaviour
         {
             return (swipeDelta.x > 0) ? Direction.Right : Direction.Left;
         }
-        else if (Mathf.Abs(swipeDelta.x) < Mathf.Abs(swipeDelta.y))
-        {
-            return (swipeDelta.y > 0) ? Direction.Up : Direction.Down;
-        }
         else
         {
-            return Direction.None;
+            return (swipeDelta.y > 0) ? Direction.Up : Direction.Down;
         }
     }
 }

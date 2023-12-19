@@ -7,9 +7,12 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using Firebase.Extensions;
 using Firebase.Database;
+using System;
+using Firebase;
 
 public class AuthUser : MonoBehaviour
 {
+    private const string AUTO_LOGIN = "AutoLogin";
     [Header("SignUp")]
     [SerializeField] private TMP_InputField _email;
     [SerializeField] private TMP_InputField _password;
@@ -25,8 +28,14 @@ public class AuthUser : MonoBehaviour
     [SerializeField] private Button _signUp;
     [SerializeField] private int _minPasswordLenght = 6;
 
+    [SerializeField] private TMP_Text _errorTextSignUp;
+    [SerializeField] private TMP_Text _errorTextLogIn;
+
+    [SerializeField] private Toggle _rememberMe;
+
     private DatabaseReference _databaseReference;
     private FirebaseAuth _auth;
+    private FirebaseUser _user;
     private readonly string _leaderboard = "leaderboard";
 
     public UnityAction OnSignUpSuccsesfuly;
@@ -38,12 +47,32 @@ public class AuthUser : MonoBehaviour
 
         _signUp.onClick.AddListener(SignUp);
         _signIn.onClick.AddListener(LogIn);
+
+        bool key = Convert.ToBoolean(PlayerPrefs.GetInt(AUTO_LOGIN));
+        if(key)
+        {
+            SceneManager.LoadScene("GameScene");
+        }
     }
 
     private void InitializeFirebase()
     {
+        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
+        {
+            var dependencyStatus = task.Result;
+            if (dependencyStatus == DependencyStatus.Available)
+            {
+                FirebaseApp app = FirebaseApp.DefaultInstance;
+            }
+            else
+            {
+                UnityEngine.Debug.LogError(System.String.Format(
+                "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
+            }
+        });
         _auth = FirebaseAuth.DefaultInstance;
         _databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
+        _user = FirebaseAuth.DefaultInstance.CurrentUser;
     }
 
     public void SignUp()
@@ -52,16 +81,16 @@ public class AuthUser : MonoBehaviour
         _auth.CreateUserWithEmailAndPasswordAsync(_email.text, _password.text).ContinueWithOnMainThread(task => {
             if (task.IsCanceled)
             {
-                Debug.Log("SignUp Canceled");
+                _errorTextSignUp.text = "SignUp Canceled";
             }
             else if(task.IsFaulted)
             {
-                Debug.Log("SignUp Faulted");
+            _errorTextSignUp.text = "SignUp Faulted";
                 Debug.Log(task.Exception.ToString());
             }
             else if(task.IsCompleted)
             {
-                Debug.Log("SignUp Succsesfully");
+                _errorTextSignUp.text = "SignUp Succsesfully";
                 AddUserDataToDB(_email.text, _login.text);
                 OnSignUpSuccsesfuly?.Invoke();
 
@@ -74,22 +103,22 @@ public class AuthUser : MonoBehaviour
     {
         if (_login.text.Length == 0)
         {
-            Debug.Log("Login is empty");
+            _errorTextSignUp.text = "Login is empty";
             return;
         }
         else if (_email.text.Length == 0)
         {
-            Debug.Log("Email is empty");
+            _errorTextSignUp.text = "Email is empty";
             return;
         }
         else if (_password.text.Length < _minPasswordLenght)
         {
-            Debug.Log("Password is so short");
+            _errorTextSignUp.text = "Password is so short";
             return;
         }
         else if (_password.text != _confirPassword.text)
         {
-            Debug.Log("Passwords is not mutch");
+            _errorTextSignUp.text = "Passwords is not mutch";
             return;
         }
     }
@@ -101,35 +130,36 @@ public class AuthUser : MonoBehaviour
         {
             if (task.IsCanceled)
             {
-                Debug.Log("SignIn Canceled");
+                _errorTextLogIn.text = "SignIn Canceled";
             }
             else if (task.IsFaulted)
             {
 
-                Debug.Log("SignIn Faulted");
+                _errorTextLogIn.text = "SignIn Faulted";
                 Debug.Log(task.Exception.ToString());
             }
             else if (task.IsCompleted)
             {
                 
                 OnLogInSuccsesfuly?.Invoke();
-                Debug.Log("SignIn Succsesfully");
+            _errorTextLogIn.text = "SignIn Succsesfully";
                 SceneManager.LoadScene("GameScene");
             }
         });
-        
+        int isOn = Convert.ToInt32(_rememberMe.isOn);
+        PlayerPrefs.SetInt(AUTO_LOGIN, isOn);
     }
 
     private void LoginInputValidate()
     {
         if (_emailIn.text.Length == 0)
         {
-            Debug.Log("Email is empty");
+            _errorTextLogIn.text = "Email is empty";
             return;
         }
         else if (_passwordIn.text.Length == 0)
         {
-            Debug.Log("Plese, enter password");
+            _errorTextLogIn.text = "Plese, enter password";
             return;
         }
     }
