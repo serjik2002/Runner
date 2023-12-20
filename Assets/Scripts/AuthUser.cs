@@ -57,19 +57,6 @@ public class AuthUser : MonoBehaviour
 
     private void InitializeFirebase()
     {
-        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task =>
-        {
-            var dependencyStatus = task.Result;
-            if (dependencyStatus == DependencyStatus.Available)
-            {
-                FirebaseApp app = FirebaseApp.DefaultInstance;
-            }
-            else
-            {
-                UnityEngine.Debug.LogError(System.String.Format(
-                "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
-            }
-        });
         _auth = FirebaseAuth.DefaultInstance;
         _databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
         _user = FirebaseAuth.DefaultInstance.CurrentUser;

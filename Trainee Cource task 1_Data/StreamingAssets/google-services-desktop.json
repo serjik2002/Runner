@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "527115666759",
+    "firebase_url": "https://trainee-task1-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "trainee-task1",
+    "storage_bucket": "trainee-task1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:527115666759:android:350cf998e03765d0fb7862",
+        "android_client_info": {
+          "package_name": "com.DefaultCompany.TraineeCourcetask1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOHol-T7qtAsnxAepPy2-FtHNAZg4KTc8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

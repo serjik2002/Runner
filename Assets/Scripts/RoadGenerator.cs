@@ -4,65 +4,55 @@ using UnityEngine;
 
 public class RoadGenerator : MonoBehaviour
 {
-    [SerializeField] private GameObject _roadPrefab;
+    [SerializeField] private Road _roadPrefab;
     [SerializeField] private int _roadsCount;
-    [SerializeField] private int _speed = 5;
-    [SerializeField] private Transform _nextSpawnTransform;
 
-    private List<GameObject> _roadPool;
-    private GameObject _lastRoadSegment;
+    private ObjectPool<Road> _pool;
+    private Road _lastRoadSegment;
+    private List<Road> _activeRoadSegments;
 
-    
+    public ObjectPool<Road> Pool => _pool;
+
+    private void Awake()
+    {
+        _pool = new ObjectPool<Road>(_roadPrefab, _roadsCount, false);
+    }
     private void Start()
     {
-        _roadPool = new List<GameObject>();
-        InitializeObjectPool();
+        var firstSegment = _pool.GetObjectFromPool();
+        firstSegment.gameObject.transform.position = Vector3.zero;
+        _lastRoadSegment = firstSegment;
+
+
     }
 
     private void Update()
     {
-        SpawnRoadSegments();
-        //MoveRoad();
-    }
-
-    public void InitializeObjectPool()
-    {
-        for (int i = 0; i < _roadsCount; i++)
+        //SpawnRoadSegments();
+        if (_pool.TryGetObject())
         {
-            var roadSegment = Instantiate(_roadPrefab);
-            roadSegment.SetActive(false);
-            _roadPool.Add(roadSegment);
-        }
-    }
-
-    public void MoveRoad()
-    {
-        foreach (var item in _roadPool)
-        {
-            item.transform.position -= new Vector3(0, 0, 1) * _speed * Time.deltaTime;
+            var segment = _pool.GetObjectFromPool();
+            segment.gameObject.transform.position = _lastRoadSegment.transform.position + new Vector3(0, 0, 19);
+            _lastRoadSegment = segment;
         }
     }
 
     public void SpawnRoadSegments()
     {
-        if(_lastRoadSegment == null)
+        Road segment = _pool.GetObjectFromPool();
+        _activeRoadSegments.Add(segment);
+        _lastRoadSegment = segment;
+        segment.transform.position = _lastRoadSegment.transform.position + new Vector3(0, 0, 19);
+        
+
+        foreach (var item in _activeRoadSegments)
         {
-            _roadPool[0].transform.position = Vector3.zero;
-            _roadPool[0].SetActive(true);
-            _lastRoadSegment = _roadPool[0];
-        }
-        foreach (var item in _roadPool)
-        {
-            if(!item.activeSelf)
+            if (item.gameObject.transform.position.z < Camera.main.transform.position.z - 20);
             {
-                item.transform.position = _lastRoadSegment.transform.position + new Vector3(0, 0, 19);
-                item.SetActive(true);
-                _lastRoadSegment = item;
+                _pool.ReturnObjectToPool(item);
+                _activeRoadSegments.Remove(item);
             }
-            else if(item.transform.position.z < Camera.main.transform.position.z - 20)
-            {
-                item.SetActive(false);
-            }
+
         }
     }
 }

@@ -8,6 +8,7 @@ TagManager:
   - asteroid
   - Die
   - Ground
+  - Road
   layers:
   - Default
   - TransparentFX
